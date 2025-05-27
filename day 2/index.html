@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Editable To-Do List</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f2f5;
+      display: flex;
+      justify-content: center;
+      padding-top: 50px;
+    }
+
+    .container {
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 500px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .input-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    input[type="text"], input[type="datetime-local"] {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    input[type="text"] {
+      flex: 1;
+    }
+
+    button {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #add-btn {
+      background-color: #28a745;
+      color: white;
+    }
+
+    #add-btn:hover {
+      background-color: #218838;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      background: #f9f9f9;
+      margin-bottom: 10px;
+      padding: 10px;
+      border-radius: 5px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .task-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .task-text {
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .task-completed .task-text {
+      text-decoration: line-through;
+      color: gray;
+    }
+
+    .actions {
+      margin-top: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .delete-btn {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    .delete-btn:hover {
+      background-color: #c82333;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Editable To-Do List</h1>
+    <div class="input-group">
+      <input type="text" id="taskInput" placeholder="Enter task">
+      <button id="add-btn">Add</button>
+    </div>
+    <ul id="taskList"></ul>
+  </div>
+
+  <script>
+    const addBtn = document.getElementById("add-btn");
+    const taskInput = document.getElementById("taskInput");
+    const taskList = document.getElementById("taskList");
+
+    addBtn.addEventListener("click", addTask);
+    taskInput.addEventListener("keypress", function(e) {
+      if (e.key === "Enter") addTask();
+    });
+
+    function addTask() {
+      const text = taskInput.value.trim();
+      if (text === "") return;
+
+      const li = document.createElement("li");
+      const taskHeader = document.createElement("div");
+      taskHeader.className = "task-header";
+
+      const span = document.createElement("span");
+      span.className = "task-text";
+      span.textContent = text;
+      span.addEventListener("click", () => {
+        li.classList.toggle("task-completed");
+      });
+
+      const delBtn = document.createElement("button");
+      delBtn.textContent = "Delete";
+      delBtn.className = "delete-btn";
+      delBtn.addEventListener("click", () => {
+        li.remove();
+      });
+
+      taskHeader.appendChild(span);
+      taskHeader.appendChild(delBtn);
+
+      const actions = document.createElement("div");
+      actions.className = "actions";
+
+      const dateInput = document.createElement("input");
+      dateInput.type = "datetime-local";
+      dateInput.value = getCurrentDateTimeLocal();
+
+      actions.appendChild(dateInput);
+
+      li.appendChild(taskHeader);
+      li.appendChild(actions);
+
+      taskList.appendChild(li);
+
+      taskInput.value = "";
+      taskInput.focus();
+    }
+
+    function getCurrentDateTimeLocal() {
+      const now = new Date();
+      now.setMinutes(now.getMinutes() - now.getTimezoneOffset()); // Adjust for local time
+      return now.toISOString().slice(0, 16); // "YYYY-MM-DDTHH:MM"
+    }
+  </script>
+
+</body>
+</html>
